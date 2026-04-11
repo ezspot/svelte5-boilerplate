@@ -1,0 +1,164 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "../generated/prisma"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+  EXPIRED
+}
+
+model User {
+  id                    String         @id @default(cuid())
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  email                 String         @unique
+  emailVerified         Boolean        @default(false)
+  name                  String
+  image                 String?
+  currentOrganizationId String?
+  currentOrganization   Organization?  @relation("CurrentOrganization", fields: [currentOrganizationId], references: [id], onDelete: SetNull)
+  accounts              Account[]
+  sessions              Session[]
+  memberships           Membership[]
+  auditEvents           AuditEvent[]   @relation("ActorAuditEvents")
+  invitationsSent       Invitation[]   @relation("InvitationSender")
+  ownedOrganizations    Organization[] @relation("OwnedOrganizations")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  providerId            String
+  accountId             String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  value      String
+  expiresAt  DateTime
+  identifier String
+
+  @@unique([identifier, value])
+  @@index([expiresAt])
+}
+
+model Organization {
+  id           String       @id @default(cuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  name         String
+  slug         String       @unique
+  billingEmail String?
+  ownerId      String
+  owner        User         @relation("OwnedOrganizations", fields: [ownerId], references: [id], onDelete: Restrict)
+  currentUsers User[]       @relation("CurrentOrganization")
+  memberships  Membership[]
+  invitations  Invitation[]
+  auditEvents  AuditEvent[] @relation("OrganizationAuditEvents")
+}
+
+model Membership {
+  id             String         @id @default(cuid())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  organizationId String
+  userId         String
+  role           MembershipRole @default(OWNER)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+}
+
+model Invitation {
+  id              String           @id @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  organizationId  String
+  email           String
+  role            MembershipRole   @default(MEMBER)
+  token           String           @unique
+  status          InvitationStatus @default(PENDING)
+  invitedByUserId String?
+  expiresAt       DateTime
+  lastSentAt      DateTime?
+  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invitedByUser   User?            @relation("InvitationSender", fields: [invitedByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([organizationId, email])
+  @@index([status, expiresAt])
+}
+
+model AuditEvent {
+  id             String        @id @default(cuid())
+  createdAt      DateTime      @default(now())
+  organizationId String?
+  actorUserId    String?
+  type           String
+  targetType     String?
+  targetId       String?
+  ipAddress      String?
+  userAgent      String?
+  payload        Json?
+  organization   Organization? @relation("OrganizationAuditEvents", fields: [organizationId], references: [id], onDelete: SetNull)
+  actorUser      User?         @relation("ActorAuditEvents", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([actorUserId, createdAt])
+}
+
+model EmailWebhookEvent {
+  id            String   @id @default(cuid())
+  externalId    String   @unique
+  type          String
+  resendEmailId String?
+  payload       Json
+  createdAt     DateTime @default(now())
+  processedAt   DateTime @default(now())
+
+  @@index([type, createdAt])
+}
