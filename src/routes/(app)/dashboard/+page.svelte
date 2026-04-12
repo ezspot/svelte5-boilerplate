@@ -13,13 +13,51 @@
 	<title>Dashboard | Acme SaaS</title>
 </svelte:head>
 
-<div class="space-y-3 md:space-y-4">
-	<section class="app-content-card px-5 py-5 md:px-6">
-		<h2 class="text-3xl font-semibold tracking-tight">Overview</h2>
-		<p class="mt-2 max-w-2xl text-sm leading-6 text-base-content/66">
-			A tighter operator view for day-to-day product work: workspace posture, collaboration
-			readiness, and recent activity in one console.
-		</p>
+<div class="space-y-4">
+	<section class="app-header-card">
+		<div>
+			<div class="app-header-meta">
+				<span class="app-meta-pill">Live workspace</span>
+				<span class="app-meta-pill">{data.organization.name}</span>
+			</div>
+			<h1 class="mt-4 text-3xl font-semibold tracking-tight text-balance">Overview</h1>
+			<p class="section-copy mt-3 text-base">
+				A tighter operator view for day-to-day product work: workspace posture, collaboration
+				readiness, and recent activity in one console.
+			</p>
+		</div>
+
+		<div class="grid gap-3 sm:grid-cols-2 lg:w-[22rem]">
+			<div class="app-kpi-card">
+				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
+					Plan
+				</p>
+				<div class="mt-3 flex items-center justify-between gap-3">
+					<p class="text-lg font-semibold capitalize">{data.organization.planKey}</p>
+					<a
+						class="text-sm font-medium text-primary hover:text-primary/80"
+						href={resolve('/settings/billing')}
+					>
+						Manage
+					</a>
+				</div>
+			</div>
+
+			<div class="app-kpi-card">
+				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
+					Access
+				</p>
+				<div class="mt-3 flex items-center justify-between gap-3">
+					<p class="text-lg font-semibold capitalize">{data.membership.role.toLowerCase()}</p>
+					<a
+						class="text-sm font-medium text-primary hover:text-primary/80"
+						href={resolve('/settings/organization')}
+					>
+						Review
+					</a>
+				</div>
+			</div>
+		</div>
 	</section>
 
 	{#if navigating.to}
@@ -47,22 +85,23 @@
 			{/each}
 		</div>
 
-		<div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_288px]">
-			<section class="app-content-card p-5 md:p-6">
+		<div class="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_320px]">
+			<section class="dashboard-card">
 				<div class="flex items-center justify-between gap-4">
 					<div>
-						<p
-							class="text-[0.72rem] font-semibold tracking-[0.16em] text-base-content/42 uppercase"
-						>
+						<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/44 uppercase">
 							Recent activity
 						</p>
 						<h2 class="mt-2 text-xl font-semibold">Audit trail</h2>
 					</div>
-					<div
-						class="rounded-xl border border-base-300/75 bg-base-100 px-3 py-2 text-sm text-base-content/62"
-					>
+					<div class="app-meta-pill">
 						{data.dashboard.recentEvents.length} events
 					</div>
+				</div>
+
+				<div class="app-command mt-5">
+					<Clock3 size={15} class="text-primary" />
+					<span>Recent workspace activity and audit events</span>
 				</div>
 
 				{#if data.dashboard.recentEvents.length}
@@ -116,23 +155,17 @@
 				{/if}
 			</section>
 
-			<aside class="space-y-3">
-				<div class="app-content-card p-5">
-					<p class="text-[0.72rem] font-semibold tracking-[0.16em] text-base-content/42 uppercase">
+			<aside class="app-side-stack">
+				<div class="dashboard-card">
+					<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/44 uppercase">
 						Quick links
 					</p>
-					<div class="mt-4 space-y-2">
-						<a
-							class="flex items-center justify-between rounded-xl border border-base-300/75 bg-base-100 px-4 py-3 text-sm font-medium hover:bg-base-200"
-							href={resolve('/settings/profile')}
-						>
+					<div class="app-link-list mt-4">
+						<a class="app-link-row" href={resolve('/settings/profile')}>
 							Update profile
 							<ArrowUpRight size={15} />
 						</a>
-						<a
-							class="flex items-center justify-between rounded-xl border border-base-300/75 bg-base-100 px-4 py-3 text-sm font-medium hover:bg-base-200"
-							href={resolve('/settings/organization')}
-						>
+						<a class="app-link-row" href={resolve('/settings/organization')}>
 							Manage workspace
 							<Users size={15} />
 						</a>
@@ -146,12 +179,12 @@
 					</div>
 				</div>
 
-				<div class="app-content-card p-5">
-					<p class="text-[0.72rem] font-semibold tracking-[0.16em] text-base-content/42 uppercase">
+				<div class="dashboard-card">
+					<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/44 uppercase">
 						Workspace notes
 					</p>
 					<div class="mt-4 space-y-3 text-sm text-base-content/66">
-						<div class="rounded-xl border border-base-300/75 bg-base-100 p-4">
+						<div class="app-note-card">
 							<p class="font-medium">Collaboration</p>
 							<p class="mt-2 leading-6">
 								{data.organization.planKey === 'free'
@@ -159,7 +192,7 @@
 									: 'Invites are available from Organization settings.'}
 							</p>
 						</div>
-						<div class="rounded-xl border border-base-300/75 bg-base-100 p-4">
+						<div class="app-note-card">
 							<p class="font-medium">Activity cadence</p>
 							<p class="mt-2 flex items-center gap-2">
 								<Clock3 size={15} class="text-secondary" />

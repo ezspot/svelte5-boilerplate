@@ -37,16 +37,16 @@
 
 <div class="dashboard-card">
 	<div class="flex items-start justify-between gap-4">
-		<div>
-			<p class="text-[0.72rem] font-semibold tracking-[0.16em] text-base-content/42 uppercase">
+		<div class="min-w-0">
+			<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/44 uppercase">
 				{label}
 			</p>
-			<p class="mt-3 text-4xl font-semibold tracking-tight">{value}</p>
+			<p class="mt-3 text-[2.2rem] font-semibold tracking-[-0.04em] tabular-nums">{value}</p>
 		</div>
-		<div class={`rounded-2xl p-3 ${presentation.surface} ${presentation.tone}`}>
+		<div class={`rounded-[1.1rem] p-3 ${presentation.surface} ${presentation.tone}`}>
 			<Icon size={18} strokeWidth={2.1} />
 		</div>
 	</div>
-	<p class="mt-3 text-sm leading-6 text-base-content/62">{description}</p>
+	<p class="mt-4 text-sm leading-6 text-base-content/62">{description}</p>
 	<div class="mt-5 border-t border-base-300/70"></div>
 </div>

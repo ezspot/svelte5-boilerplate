@@ -9,7 +9,7 @@
 </script>
 
 <span
-	class="inline-flex items-center justify-center rounded-2xl border border-white/70 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--color-primary)_82%,white),color-mix(in_oklab,var(--color-secondary)_55%,white))] p-2.5 text-primary-content shadow-[0_16px_30px_-18px_rgba(20,120,98,0.65)]"
+	class="inline-flex items-center justify-center rounded-2xl border border-white/70 bg-[linear-gradient(135deg,#38bdf8_0%,#2563eb_100%)] p-2.5 text-white shadow-[0_16px_32px_-18px_rgba(37,99,235,0.55)]"
 >
 	<Sparkles {size} strokeWidth={2.15} />
 </span>

@@ -96,11 +96,11 @@
 	{/if}
 
 	<div
-		class="min-h-screen lg:grid lg:[grid-template-columns:var(--app-nav-width)_minmax(0,1fr)]"
+		class="min-h-screen lg:grid lg:grid-cols-[var(--app-nav-width)_minmax(0,1fr)]"
 		style={`--app-nav-width: ${desktopNavCollapsed ? '4.75rem' : '15.5rem'}`}
 	>
 		<aside
-			class={`app-sidebar hidden h-screen flex-col lg:sticky lg:top-0 lg:flex ${desktopNavCollapsed ? 'w-[4.75rem]' : 'w-[15.5rem]'}`}
+			class={`app-sidebar hidden h-screen flex-col lg:sticky lg:top-0 lg:flex ${desktopNavCollapsed ? 'w-19' : 'w-62'}`}
 		>
 			<div class="app-shell-header-row justify-between border-b border-base-300/80 px-3">
 				<a
@@ -116,8 +116,8 @@
 					</div>
 					{#if !desktopNavCollapsed}
 						<div class="min-w-0">
-							<p class="truncate text-sm font-semibold">Acme SaaS</p>
-							<p class="truncate text-xs text-base-content/48">{data.organization.slug}</p>
+							<p class="truncate text-sm font-semibold text-white">Acme SaaS</p>
+							<p class="truncate text-xs text-slate-400">{data.organization.slug}</p>
 						</div>
 					{/if}
 				</a>
@@ -162,8 +162,8 @@
 				{#if desktopNavCollapsed}
 					<div class="flex flex-col items-center gap-2.5">
 						<a
-							class={`flex h-10 w-10 items-center justify-center rounded-full border border-base-300/75 bg-base-200 text-sm font-semibold transition hover:bg-base-300/70 ${
-								page.url.pathname === '/settings/profile' ? 'ring-2 ring-base-content/10' : ''
+							class={`flex h-10 w-10 items-center justify-center rounded-full border border-white/8 bg-white/8 text-sm font-semibold text-white transition hover:bg-white/12 ${
+								page.url.pathname === '/settings/profile' ? 'ring-2 ring-white/20' : ''
 							}`}
 							href={resolve('/settings/profile')}
 							title="Profile"
@@ -183,28 +183,33 @@
 						</form>
 					</div>
 				{:else}
-					<div class="rounded-2xl border border-base-300/75 bg-base-100 p-2.5">
+					<div class="rounded-[1.35rem] border border-white/8 bg-white/5 p-2.5 text-slate-100">
 						<a
-							class="flex items-start gap-3 rounded-xl px-2.5 py-2 transition hover:bg-base-200/70"
+							class="flex items-start gap-3 rounded-xl px-2.5 py-2 transition hover:bg-white/6"
 							href={resolve('/settings/profile')}
 						>
 							<div
-								class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-base-300/75 bg-base-200 text-sm font-semibold"
+								class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/8 bg-white/8 text-sm font-semibold text-white"
 							>
 								{data.user.name.slice(0, 1).toUpperCase()}
 							</div>
 							<div class="min-w-0 flex-1 text-sm">
-								<p class="truncate font-medium">{data.user.name}</p>
-								<p class="mt-1 truncate text-xs text-base-content/56">{data.user.email}</p>
+								<p class="truncate font-medium text-white">{data.user.name}</p>
+								<p class="mt-1 truncate text-xs text-slate-400">{data.user.email}</p>
 							</div>
 							<div class="pt-0.5">
-								<UserRound size={16} class="text-base-content/42" />
+								<UserRound size={16} class="text-slate-400" />
 							</div>
 						</a>
 						<div class="mt-2 flex items-center justify-between gap-3 px-2.5 pb-1">
 							<ClientSessionBadge />
 							<form action="/login?/logout" method="POST">
-								<button class="btn rounded-xl btn-outline btn-sm" type="submit">Sign out</button>
+								<button
+									class="btn rounded-xl border-white/10 bg-white/6 text-white btn-sm hover:bg-white/10"
+									type="submit"
+								>
+									Sign out
+								</button>
 							</form>
 						</div>
 					</div>
@@ -213,7 +218,7 @@
 		</aside>
 
 		<aside
-			class={`app-sidebar fixed inset-y-0 left-0 z-40 flex w-[17rem] flex-col transition-transform duration-200 lg:hidden ${
+			class={`app-sidebar fixed inset-y-0 left-0 z-40 flex w-68 flex-col transition-transform duration-200 lg:hidden ${
 				mobileNavOpen ? 'translate-x-0' : '-translate-x-full'
 			}`}
 		>
@@ -224,8 +229,8 @@
 					<LogoMark size={16} />
 				</div>
 				<div class="min-w-0">
-					<p class="truncate text-sm font-semibold">Acme SaaS</p>
-					<p class="truncate text-xs text-base-content/48">{data.organization.slug}</p>
+					<p class="truncate text-sm font-semibold text-white">Acme SaaS</p>
+					<p class="truncate text-xs text-slate-400">{data.organization.slug}</p>
 				</div>
 			</div>
 
@@ -248,32 +253,35 @@
 			</div>
 
 			<div class="border-t border-base-300/80 p-4">
-				<div class="rounded-2xl border border-base-300/75 bg-base-100 p-2.5">
+				<div class="rounded-[1.35rem] border border-white/8 bg-white/5 p-2.5 text-slate-100">
 					<a
-						class="flex items-start gap-3 rounded-xl px-2.5 py-2 transition hover:bg-base-200/70"
+						class="flex items-start gap-3 rounded-xl px-2.5 py-2 transition hover:bg-white/6"
 						href={resolve('/settings/profile')}
 						onclick={closeMobileNav}
 					>
 						<div
-							class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-base-300/75 bg-base-200 text-sm font-semibold"
+							class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/8 bg-white/8 text-sm font-semibold text-white"
 						>
 							{data.user.name.slice(0, 1).toUpperCase()}
 						</div>
 						<div class="min-w-0 flex-1 text-sm">
-							<p class="truncate font-medium">{data.user.name}</p>
-							<p class="mt-1 truncate text-xs text-base-content/56">{data.user.email}</p>
+							<p class="truncate font-medium text-white">{data.user.name}</p>
+							<p class="mt-1 truncate text-xs text-slate-400">{data.user.email}</p>
 						</div>
 						<div class="pt-0.5">
-							<UserRound size={16} class="text-base-content/42" />
+							<UserRound size={16} class="text-slate-400" />
 						</div>
 					</a>
 					<div class="mt-2 flex items-center justify-between gap-3 px-2.5 pb-1">
 						<ClientSessionBadge />
 					</div>
 					<form action="/login?/logout" method="POST">
-						<button class="btn mt-4 w-full rounded-xl btn-outline btn-sm" type="submit"
-							>Sign out</button
+						<button
+							class="btn mt-4 w-full rounded-xl border-white/10 bg-white/6 text-white btn-sm hover:bg-white/10"
+							type="submit"
 						>
+							Sign out
+						</button>
 					</form>
 				</div>
 			</div>
@@ -281,7 +289,7 @@
 
 		<div class="min-w-0">
 			<button
-				class="btn fixed top-3 left-3 z-20 btn-square rounded-xl border border-base-300/80 bg-base-100/92 shadow-sm backdrop-blur lg:hidden"
+				class="btn fixed top-3 left-3 z-20 btn-square rounded-xl border border-slate-900/10 bg-base-100/92 text-slate-900 shadow-sm backdrop-blur lg:hidden"
 				type="button"
 				aria-label="Open navigation"
 				onclick={() => {
@@ -292,7 +300,7 @@
 			</button>
 
 			<main class="app-page">
-				<div>{@render children()}</div>
+				<div class="mx-auto w-full max-w-[1600px]">{@render children()}</div>
 			</main>
 		</div>
 	</div>

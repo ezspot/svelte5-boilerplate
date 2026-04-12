@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 @plugin 'daisyui' {
 	themes: false;
@@ -9,21 +10,21 @@
 	prefersdark: false;
 	color-scheme: light;
 
-	--color-base-100: oklch(98.8% 0.008 106);
-	--color-base-200: oklch(96.6% 0.012 106);
-	--color-base-300: oklch(92.6% 0.018 102);
-	--color-base-content: oklch(27% 0.03 248);
-	--color-primary: oklch(53% 0.13 170);
-	--color-primary-content: oklch(98.5% 0.01 110);
-	--color-secondary: oklch(58% 0.12 217);
-	--color-secondary-content: oklch(98.8% 0.01 240);
-	--color-accent: oklch(74% 0.09 88);
-	--color-accent-content: oklch(24% 0.02 98);
+	--color-base-100: oklch(98.9% 0.004 247);
+	--color-base-200: oklch(97% 0.006 248);
+	--color-base-300: oklch(92.8% 0.012 252);
+	--color-base-content: oklch(22% 0.02 255);
+	--color-primary: oklch(49% 0.12 249);
+	--color-primary-content: oklch(98.5% 0.01 250);
+	--color-secondary: oklch(34% 0.03 255);
+	--color-secondary-content: oklch(98.8% 0.01 250);
+	--color-accent: oklch(74% 0.16 148);
+	--color-accent-content: oklch(19% 0.02 148);
 	--color-neutral: oklch(26% 0.03 247);
 	--color-neutral-content: oklch(97.5% 0.01 100);
 	--color-info: oklch(69% 0.1 222);
 	--color-info-content: oklch(19% 0.03 240);
-	--color-success: oklch(72% 0.12 158);
+	--color-success: oklch(73% 0.16 149);
 	--color-success-content: oklch(22% 0.03 163);
 	--color-warning: oklch(82% 0.12 88);
 	--color-warning-content: oklch(28% 0.04 86);
@@ -40,7 +41,7 @@
 }
 
 @theme {
-	--font-sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+	--font-sans: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
 }
 
 :root {
@@ -48,16 +49,16 @@
 }
 
 html {
-	background: linear-gradient(180deg, oklch(99% 0.01 110), oklch(97.2% 0.015 102));
+	background: linear-gradient(180deg, oklch(99.2% 0.004 255), oklch(96.9% 0.008 248));
 }
 
 body {
 	min-height: 100vh;
 	background:
-		radial-gradient(circle at top left, oklch(95% 0.06 167 / 0.55), transparent 34%),
-		radial-gradient(circle at top right, oklch(94% 0.04 222 / 0.45), transparent 32%),
-		linear-gradient(180deg, oklch(99% 0.008 105), oklch(96.7% 0.012 102));
-	color: oklch(27% 0.03 248);
+		radial-gradient(circle at top left, oklch(94% 0.03 240 / 0.42), transparent 36%),
+		radial-gradient(circle at top right, oklch(95% 0.04 210 / 0.34), transparent 28%),
+		linear-gradient(180deg, oklch(99% 0.004 252), oklch(96.6% 0.008 248));
+	color: oklch(22% 0.02 255);
 	font-family: var(--font-sans);
 }
 
@@ -70,19 +71,19 @@ a {
 }
 
 .surface-panel {
-	@apply rounded-3xl border border-base-300/60 bg-base-100/80 shadow-[0_18px_60px_-28px_rgba(34,43,69,0.18)] backdrop-blur-xl;
+	@apply rounded-[1.75rem] border border-base-300/70 bg-base-100/92 shadow-[0_22px_70px_-36px_rgba(15,23,42,0.2)] backdrop-blur-xl;
 }
 
 .surface-panel-muted {
-	@apply rounded-3xl border border-base-300/55 bg-base-200/55 shadow-[0_12px_40px_-24px_rgba(34,43,69,0.16)];
+	@apply rounded-[1.5rem] border border-base-300/70 bg-base-200/72 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.16)];
 }
 
 .hero-surface {
-	@apply rounded-4xl border border-white/70 bg-white/75 shadow-[0_24px_90px_-38px_rgba(34,43,69,0.25)] backdrop-blur-2xl;
+	@apply rounded-[2rem] border border-white/80 bg-white/82 shadow-[0_32px_100px_-42px_rgba(15,23,42,0.24)] backdrop-blur-2xl;
 }
 
 .eyebrow {
-	@apply text-xs font-semibold tracking-[0.22em] text-primary uppercase;
+	@apply text-[0.7rem] font-bold tracking-[0.24em] text-primary uppercase;
 }
 
 .metric-grid {
@@ -90,7 +91,7 @@ a {
 }
 
 .section-copy {
-	@apply max-w-2xl text-sm leading-6 text-base-content/68;
+	@apply max-w-2xl text-sm leading-6 text-base-content/66;
 }
 
 .data-table-shell {
@@ -114,11 +115,11 @@ a {
 }
 
 .app-shell {
-	@apply min-h-screen bg-[oklch(97.7%_0.006_106)];
+	@apply min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#f2f6fb_100%)];
 }
 
 .app-sidebar {
-	@apply border-r border-base-300/80 bg-base-100 shadow-[24px_0_60px_-40px_rgba(32,41,57,0.35)] transition-[width] duration-200;
+	@apply border-r border-slate-800/90 bg-[linear-gradient(180deg,#0f172a_0%,#111827_100%)] text-slate-100 shadow-[28px_0_80px_-42px_rgba(2,6,23,0.7)] transition-[width] duration-200;
 }
 
 .app-shell-header-row {
@@ -126,31 +127,63 @@ a {
 }
 
 .app-nav-link {
-	@apply flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-base-content/68 transition hover:bg-base-200 hover:text-base-content;
+	@apply flex min-h-11 items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-white/6 hover:text-white;
 }
 
 .app-nav-link-active {
-	@apply bg-base-200 text-base-content;
+	@apply bg-white/8 text-white shadow-[inset_0_0_0_1px_rgba(148,163,184,0.16)];
 }
 
 .app-nav-icon {
-	@apply flex h-8 w-8 items-center justify-center rounded-lg bg-base-200/80 text-base-content/66;
+	@apply flex h-8 w-8 items-center justify-center rounded-xl bg-white/6 text-slate-300;
 }
 
 .app-nav-link-active .app-nav-icon {
-	@apply bg-base-content text-base-100;
+	@apply bg-sky-500 text-white;
 }
 
 .app-page {
-	@apply px-3 py-16 md:px-5 md:py-5 lg:px-6 lg:py-5;
+	@apply px-3 py-16 md:px-5 md:py-6 lg:px-7 lg:py-7;
 }
 
 .app-content-card {
-	@apply rounded-2xl border border-base-300/80 bg-base-100 shadow-[0_10px_30px_-26px_rgba(32,41,57,0.3)];
+	@apply rounded-[1.5rem] border border-base-300/80 bg-white shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)];
 }
 
 .dashboard-card {
-	@apply rounded-2xl border border-base-300/80 bg-base-100 p-5 shadow-[0_10px_30px_-26px_rgba(32,41,57,0.28)];
+	@apply rounded-[1.5rem] border border-base-300/80 bg-white p-5 shadow-[0_22px_46px_-34px_rgba(15,23,42,0.16)];
+}
+
+.app-header-card {
+	@apply grid gap-4 rounded-[1.5rem] border border-base-300/80 bg-white px-5 py-5 shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start lg:px-6;
+}
+
+.app-header-meta {
+	@apply flex flex-wrap gap-2;
+}
+
+.app-meta-pill {
+	@apply inline-flex items-center gap-2 rounded-full border border-base-300/80 bg-base-100 px-3 py-1.5 text-xs font-medium text-base-content/66;
+}
+
+.app-kpi-card {
+	@apply rounded-[1.25rem] border border-base-300/75 bg-base-100 px-4 py-4 shadow-[0_18px_34px_-30px_rgba(15,23,42,0.16)];
+}
+
+.app-side-stack {
+	@apply space-y-3;
+}
+
+.app-note-card {
+	@apply rounded-[1.25rem] border border-base-300/75 bg-base-100 p-4;
+}
+
+.app-link-list {
+	@apply space-y-2;
+}
+
+.app-link-row {
+	@apply flex items-center justify-between gap-3 rounded-xl border border-base-300/75 bg-base-100 px-4 py-3 text-sm font-medium transition hover:bg-base-200;
 }
 
 .app-command {
@@ -158,5 +191,37 @@ a {
 }
 
 .app-subtle-button {
-	@apply inline-flex items-center gap-2 rounded-xl border border-base-300/75 bg-base-100 px-3 py-2 text-sm font-medium text-base-content/68 transition hover:bg-base-200 hover:text-base-content;
+	@apply inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/6 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white;
+}
+
+.marketing-shell {
+	@apply min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(30,41,59,0.9),transparent_30%),linear-gradient(180deg,#0f172a_0%,#111827_44%,#f8fafc_44%,#f8fafc_100%)];
+}
+
+.marketing-header {
+	@apply sticky top-0 z-20 border-b border-white/10 bg-slate-950/72 backdrop-blur-xl;
+}
+
+.marketing-nav-link {
+	@apply rounded-full px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/8 hover:text-white;
+}
+
+.marketing-badge {
+	@apply inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/6 px-3 py-1.5 text-[0.72rem] font-semibold tracking-[0.14em] text-slate-200 uppercase;
+}
+
+.marketing-panel {
+	@apply rounded-[1.75rem] border border-white/10 bg-slate-950/52 text-slate-100 shadow-[0_30px_100px_-50px_rgba(2,6,23,0.85)] backdrop-blur-2xl;
+}
+
+.marketing-panel-muted {
+	@apply rounded-[1.5rem] border border-slate-200/80 bg-white text-slate-900 shadow-[0_22px_50px_-34px_rgba(15,23,42,0.14)];
+}
+
+.marketing-stat {
+	@apply rounded-[1.35rem] border border-white/10 bg-white/6 p-4;
+}
+
+.marketing-footer {
+	@apply border-t border-slate-200/80 bg-white/88 backdrop-blur;
 }
