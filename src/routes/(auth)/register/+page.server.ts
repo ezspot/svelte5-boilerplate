@@ -4,24 +4,22 @@ import { auth } from '$lib/server/auth';
 import { redirectIfAuthenticated } from '$lib/server/auth/permissions';
 import { env } from '$lib/server/config/env';
 import { getErrorMessage } from '$lib/server/core/errors';
-import {
-	acceptInvitationForUser,
-	getInvitationByToken
-} from '$lib/server/features/organization/service';
+import { getInvitationByToken } from '$lib/server/features/organization/service';
 import type { Actions, PageServerLoad } from './$types';
 
-const registerSchema = z
-	.object({
-		name: z.string().trim().min(2, 'Name must be at least 2 characters.').max(80),
-		email: z.email('Use a valid email address.'),
-		password: z.string().min(8, 'Password must be at least 8 characters.'),
-		confirmPassword: z.string().min(8, 'Confirm your password.'),
-		invite: z.string().optional()
-	})
-	.refine((value) => value.password === value.confirmPassword, {
-		message: 'Passwords do not match.',
-		path: ['confirmPassword']
-	});
+const registerSchema = z.object({
+	name: z.string().trim().min(2, 'Name must be at least 2 characters.').max(80),
+	email: z.email('Use a valid email address.'),
+	invite: z.string().optional()
+});
+
+function buildCallbackURL(invite?: string | null) {
+	if (invite) {
+		return `${env.BETTER_AUTH_URL}/complete?invite=${encodeURIComponent(invite)}`;
+	}
+
+	return `${env.BETTER_AUTH_URL}/dashboard`;
+}
 
 export const load: PageServerLoad = async (event) => {
 	redirectIfAuthenticated(event);
@@ -47,8 +45,6 @@ export const actions: Actions = {
 		const values = {
 			name: String(formData.get('name') ?? ''),
 			email: String(formData.get('email') ?? ''),
-			password: String(formData.get('password') ?? ''),
-			confirmPassword: String(formData.get('confirmPassword') ?? ''),
 			invite: String(formData.get('invite') ?? '')
 		};
 
@@ -62,25 +58,19 @@ export const actions: Actions = {
 		}
 
 		try {
-			const result = await auth.api.signUpEmail({
+			await auth.api.signInMagicLink({
 				body: {
 					name: parsed.data.name,
 					email: parsed.data.email,
-					password: parsed.data.password,
-					callbackURL: `${env.BETTER_AUTH_URL}/dashboard`
+					callbackURL: buildCallbackURL(parsed.data.invite),
+					newUserCallbackURL: buildCallbackURL(parsed.data.invite),
+					metadata: {
+						intent: 'signup',
+						name: parsed.data.name
+					}
 				},
 				headers: event.request.headers
 			});
-
-			if (parsed.data.invite && result.user) {
-				await acceptInvitationForUser({
-					token: parsed.data.invite,
-					userId: result.user.id,
-					email: parsed.data.email,
-					ipAddress: event.getClientAddress(),
-					userAgent: event.request.headers.get('user-agent')
-				});
-			}
 		} catch (error) {
 			return fail(400, {
 				message: getErrorMessage(error, 'Unable to create the account.'),
@@ -88,6 +78,9 @@ export const actions: Actions = {
 			});
 		}
 
-		redirect(303, `/verify-email?email=${encodeURIComponent(parsed.data.email)}`);
+		redirect(
+			303,
+			`/verify-email?flow=magic-link&intent=signup&email=${encodeURIComponent(parsed.data.email)}&name=${encodeURIComponent(parsed.data.name)}${parsed.data.invite ? `&invite=${encodeURIComponent(parsed.data.invite)}` : ''}`
+		);
 	}
 };

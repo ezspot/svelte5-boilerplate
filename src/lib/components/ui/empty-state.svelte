@@ -4,16 +4,17 @@
 	type Props = {
 		title: string;
 		description: string;
-		actionHref?: string;
+		actionHref?: '/settings/organization';
 		actionLabel?: string;
 	};
 
 	let { title, description, actionHref = undefined, actionLabel = undefined }: Props = $props();
 </script>
 
-<div class="surface-panel flex flex-col items-start gap-4 p-8">
+<div class="dashboard-card flex flex-col items-start gap-4">
 	<div>
-		<h3 class="text-lg font-semibold">{title}</h3>
+		<p class="eyebrow">Status</p>
+		<h3 class="mt-2 text-lg font-semibold">{title}</h3>
 		<p class="section-copy mt-2">{description}</p>
 	</div>
 

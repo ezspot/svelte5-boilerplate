@@ -1,57 +1,73 @@
 <script lang="ts">
-	const tiers = [
-		{
-			name: 'Starter baseline',
-			price: '$0',
-			copy: 'The app foundation you customize for a single SaaS product.',
-			features: [
-				'Auth, email verification, and password reset',
-				'Organizations, invites, and audit events',
-				'Marketing routes plus an authenticated app shell'
-			]
-		},
-		{
-			name: 'Scale-ready handoff',
-			price: 'Custom',
-			copy: 'Where you layer billing, product entitlements, and team-specific domain models.',
-			features: [
-				'Billing service boundary already carved out',
-				'Prisma migrations and feature-oriented modules',
-				'Platform-agnostic SvelteKit deployment path'
-			]
-		}
-	];
+	import { resolve } from '$app/paths';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 </script>
 
 <svelte:head>
 	<title>Pricing | Acme SaaS</title>
 </svelte:head>
 
-<section class="mx-auto max-w-6xl px-6 py-16">
-	<p class="text-sm font-semibold tracking-[0.18em] text-primary uppercase">Pricing scope</p>
-	<h1 class="mt-4 text-4xl font-semibold text-balance">What the starter includes on day one.</h1>
-	<p class="section-copy mt-4">
-		This baseline is intentionally opinionated about infrastructure and intentionally light on
-		product features.
-	</p>
+<section class="mx-auto max-w-7xl px-4 py-16 md:px-6">
+	<div class="hero-surface px-6 py-8 md:px-8 md:py-10">
+		<p class="eyebrow">Pricing</p>
+		<h1 class="mt-4 max-w-4xl text-4xl font-semibold text-balance md:text-5xl">
+			Europe-first SaaS billing with a cleaner path into the US.
+		</h1>
+		<p class="section-copy mt-4 max-w-3xl text-base">
+			The starter uses a merchant-of-record billing approach for the first production baseline. That
+			keeps VAT and sales-tax operations lighter than a direct merchant stack while preserving a
+			clean upgrade path as your product grows.
+		</p>
+	</div>
 
-	<div class="mt-10 grid gap-6 md:grid-cols-2">
-		{#each tiers as tier (tier.name)}
-			<div class="surface-panel p-8">
-				<p class="text-xs font-semibold tracking-[0.18em] text-base-content/60 uppercase">
-					{tier.name}
-				</p>
-				<div class="mt-4 text-4xl font-semibold">{tier.price}</div>
-				<p class="section-copy mt-3">{tier.copy}</p>
-				<ul class="mt-6 space-y-3 text-sm">
-					{#each tier.features as feature (feature)}
+	<div class="mt-10 grid gap-6 xl:grid-cols-3">
+		{#each data.plans as plan (plan.key)}
+			<div
+				class={`surface-panel flex h-full flex-col gap-5 p-8 ${plan.highlighted ? 'shadow-[0_22px_80px_-34px_rgba(19,128,103,0.35)] ring-1 ring-primary/25' : ''}`}
+			>
+				<div class="flex items-center justify-between gap-3">
+					<p class="text-xs font-semibold tracking-[0.18em] text-base-content/60 uppercase">
+						{plan.name}
+					</p>
+					{#if plan.highlighted}
+						<span class="badge badge-outline badge-primary">Default paid plan</span>
+					{/if}
+				</div>
+
+				<div class="text-4xl font-semibold">{plan.priceLabel}</div>
+				<p class="section-copy">{plan.description}</p>
+
+				<ul class="space-y-3 text-sm">
+					{#each plan.features as feature (feature)}
 						<li class="flex gap-3">
 							<span class="mt-2 h-2 w-2 rounded-full bg-primary"></span>
 							<span>{feature}</span>
 						</li>
 					{/each}
 				</ul>
+
+				<div class="mt-auto pt-3">
+					<a
+						class={`btn w-full ${plan.highlighted ? 'btn-primary' : 'btn-outline'}`}
+						href={resolve('/register')}
+					>
+						{plan.key === 'free' ? 'Create account' : plan.ctaLabel}
+					</a>
+				</div>
 			</div>
 		{/each}
+	</div>
+
+	<div class="surface-panel-muted mt-10 p-6">
+		<p class="font-medium">Architecture note</p>
+		<p class="mt-3 text-sm leading-6 text-base-content/70">
+			The two strongest enterprise billing patterns for 2026 are a direct merchant setup covering
+			subscriptions, tax, and portal flows yourself, or a merchant-of-record setup where the
+			provider handles more compliance and tax operations. This starter chooses the second path
+			because it is the better operational fit for a Europe-first SaaS that still wants a
+			straightforward expansion path into the US.
+		</p>
 	</div>
 </section>

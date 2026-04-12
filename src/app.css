@@ -1,7 +1,42 @@
 @import 'tailwindcss';
 @plugin 'daisyui' {
-	themes: corporate --default;
+	themes: false;
 	logs: false;
+}
+@plugin 'daisyui/theme' {
+	name: 'acme';
+	default: true;
+	prefersdark: false;
+	color-scheme: light;
+
+	--color-base-100: oklch(98.8% 0.008 106);
+	--color-base-200: oklch(96.6% 0.012 106);
+	--color-base-300: oklch(92.6% 0.018 102);
+	--color-base-content: oklch(27% 0.03 248);
+	--color-primary: oklch(53% 0.13 170);
+	--color-primary-content: oklch(98.5% 0.01 110);
+	--color-secondary: oklch(58% 0.12 217);
+	--color-secondary-content: oklch(98.8% 0.01 240);
+	--color-accent: oklch(74% 0.09 88);
+	--color-accent-content: oklch(24% 0.02 98);
+	--color-neutral: oklch(26% 0.03 247);
+	--color-neutral-content: oklch(97.5% 0.01 100);
+	--color-info: oklch(69% 0.1 222);
+	--color-info-content: oklch(19% 0.03 240);
+	--color-success: oklch(72% 0.12 158);
+	--color-success-content: oklch(22% 0.03 163);
+	--color-warning: oklch(82% 0.12 88);
+	--color-warning-content: oklch(28% 0.04 86);
+	--color-error: oklch(63% 0.18 20);
+	--color-error-content: oklch(97% 0.01 20);
+	--radius-selector: 1rem;
+	--radius-field: 1rem;
+	--radius-box: 1.5rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
 }
 
 @theme {
@@ -13,15 +48,16 @@
 }
 
 html {
-	background: oklch(98% 0.01 240);
+	background: linear-gradient(180deg, oklch(99% 0.01 110), oklch(97.2% 0.015 102));
 }
 
 body {
 	min-height: 100vh;
 	background:
-		radial-gradient(circle at top, oklch(95% 0.03 225 / 0.9), transparent 35%),
-		linear-gradient(180deg, oklch(98% 0.01 240), oklch(95% 0.01 240));
-	color: oklch(28% 0.03 257);
+		radial-gradient(circle at top left, oklch(95% 0.06 167 / 0.55), transparent 34%),
+		radial-gradient(circle at top right, oklch(94% 0.04 222 / 0.45), transparent 32%),
+		linear-gradient(180deg, oklch(99% 0.008 105), oklch(96.7% 0.012 102));
+	color: oklch(27% 0.03 248);
 	font-family: var(--font-sans);
 }
 
@@ -29,18 +65,98 @@ a {
 	@apply transition-colors duration-150;
 }
 
+::selection {
+	background: color-mix(in oklab, var(--color-primary) 18%, white);
+}
+
 .surface-panel {
-	@apply rounded-2xl border border-base-300/70 bg-base-100/85 shadow-sm backdrop-blur;
+	@apply rounded-3xl border border-base-300/60 bg-base-100/80 shadow-[0_18px_60px_-28px_rgba(34,43,69,0.18)] backdrop-blur-xl;
 }
 
-.shell-link {
-	@apply rounded-xl px-3 py-2 text-sm font-medium text-base-content/70 transition hover:bg-base-200 hover:text-base-content;
+.surface-panel-muted {
+	@apply rounded-3xl border border-base-300/55 bg-base-200/55 shadow-[0_12px_40px_-24px_rgba(34,43,69,0.16)];
 }
 
-.shell-link-active {
-	@apply bg-primary/10 text-primary ring-1 ring-primary/15;
+.hero-surface {
+	@apply rounded-4xl border border-white/70 bg-white/75 shadow-[0_24px_90px_-38px_rgba(34,43,69,0.25)] backdrop-blur-2xl;
+}
+
+.eyebrow {
+	@apply text-xs font-semibold tracking-[0.22em] text-primary uppercase;
+}
+
+.metric-grid {
+	@apply grid gap-4 md:grid-cols-3;
 }
 
 .section-copy {
-	@apply max-w-2xl text-sm leading-6 text-base-content/70;
+	@apply max-w-2xl text-sm leading-6 text-base-content/68;
+}
+
+.data-table-shell {
+	@apply overflow-hidden rounded-2xl border border-base-300/75 bg-base-100;
+}
+
+.data-table-shell .table {
+	@apply text-sm;
+}
+
+.data-table-shell .table th {
+	@apply bg-base-200/65 text-[0.72rem] font-semibold tracking-[0.14em] text-base-content/55 uppercase;
+}
+
+.table-mobile-stack {
+	@apply hidden space-y-3;
+}
+
+.table-mobile-item {
+	@apply rounded-2xl border border-base-300/75 bg-base-100 p-4;
+}
+
+.app-shell {
+	@apply min-h-screen bg-[oklch(97.7%_0.006_106)];
+}
+
+.app-sidebar {
+	@apply border-r border-base-300/80 bg-base-100 shadow-[24px_0_60px_-40px_rgba(32,41,57,0.35)] transition-[width] duration-200;
+}
+
+.app-shell-header-row {
+	@apply flex min-h-16 items-center;
+}
+
+.app-nav-link {
+	@apply flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-base-content/68 transition hover:bg-base-200 hover:text-base-content;
+}
+
+.app-nav-link-active {
+	@apply bg-base-200 text-base-content;
+}
+
+.app-nav-icon {
+	@apply flex h-8 w-8 items-center justify-center rounded-lg bg-base-200/80 text-base-content/66;
+}
+
+.app-nav-link-active .app-nav-icon {
+	@apply bg-base-content text-base-100;
+}
+
+.app-page {
+	@apply px-3 py-16 md:px-5 md:py-5 lg:px-6 lg:py-5;
+}
+
+.app-content-card {
+	@apply rounded-2xl border border-base-300/80 bg-base-100 shadow-[0_10px_30px_-26px_rgba(32,41,57,0.3)];
+}
+
+.dashboard-card {
+	@apply rounded-2xl border border-base-300/80 bg-base-100 p-5 shadow-[0_10px_30px_-26px_rgba(32,41,57,0.28)];
+}
+
+.app-command {
+	@apply flex items-center gap-3 rounded-xl border border-base-300/75 bg-base-200/55 px-4 py-2.5 text-sm text-base-content/50;
+}
+
+.app-subtle-button {
+	@apply inline-flex items-center gap-2 rounded-xl border border-base-300/75 bg-base-100 px-3 py-2 text-sm font-medium text-base-content/68 transition hover:bg-base-200 hover:text-base-content;
 }

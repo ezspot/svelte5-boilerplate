@@ -7,6 +7,12 @@ CREATE TYPE "MembershipRole" AS ENUM ('OWNER', 'ADMIN', 'MEMBER');
 -- CreateEnum
 CREATE TYPE "InvitationStatus" AS ENUM ('PENDING', 'ACCEPTED', 'REVOKED', 'EXPIRED');
 
+-- CreateEnum
+CREATE TYPE "BillingProvider" AS ENUM ('PADDLE');
+
+-- CreateEnum
+CREATE TYPE "BillingSubscriptionStatus" AS ENUM ('TRIALING', 'ACTIVE', 'PAST_DUE', 'PAUSED', 'CANCELED');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -73,6 +79,7 @@ CREATE TABLE "Organization" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
+    "planKey" TEXT NOT NULL DEFAULT 'free',
     "billingEmail" TEXT,
     "ownerId" TEXT NOT NULL,
 
@@ -137,6 +144,58 @@ CREATE TABLE "EmailWebhookEvent" (
     CONSTRAINT "EmailWebhookEvent_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "BillingCustomer" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "organizationId" TEXT NOT NULL,
+    "provider" "BillingProvider" NOT NULL DEFAULT 'PADDLE',
+    "providerCustomerId" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT,
+
+    CONSTRAINT "BillingCustomer_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "BillingSubscription" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "organizationId" TEXT NOT NULL,
+    "provider" "BillingProvider" NOT NULL DEFAULT 'PADDLE',
+    "providerSubscriptionId" TEXT NOT NULL,
+    "providerTransactionId" TEXT,
+    "providerPriceId" TEXT NOT NULL,
+    "planKey" TEXT NOT NULL,
+    "status" "BillingSubscriptionStatus" NOT NULL,
+    "currencyCode" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL DEFAULT 1,
+    "currentPeriodStartsAt" TIMESTAMP(3),
+    "currentPeriodEndsAt" TIMESTAMP(3),
+    "nextBilledAt" TIMESTAMP(3),
+    "trialEndsAt" TIMESTAMP(3),
+    "cancelAtPeriodEnd" BOOLEAN NOT NULL DEFAULT false,
+    "canceledAt" TIMESTAMP(3),
+
+    CONSTRAINT "BillingSubscription_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "BillingWebhookEvent" (
+    "id" TEXT NOT NULL,
+    "receivedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "processedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "organizationId" TEXT,
+    "provider" "BillingProvider" NOT NULL DEFAULT 'PADDLE',
+    "providerEventId" TEXT NOT NULL,
+    "eventType" TEXT NOT NULL,
+    "payload" JSONB NOT NULL,
+
+    CONSTRAINT "BillingWebhookEvent_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -188,6 +247,33 @@ CREATE UNIQUE INDEX "EmailWebhookEvent_externalId_key" ON "EmailWebhookEvent"("e
 -- CreateIndex
 CREATE INDEX "EmailWebhookEvent_type_createdAt_idx" ON "EmailWebhookEvent"("type", "createdAt");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "BillingCustomer_organizationId_key" ON "BillingCustomer"("organizationId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BillingCustomer_providerCustomerId_key" ON "BillingCustomer"("providerCustomerId");
+
+-- CreateIndex
+CREATE INDEX "BillingCustomer_provider_email_idx" ON "BillingCustomer"("provider", "email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BillingSubscription_organizationId_key" ON "BillingSubscription"("organizationId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BillingSubscription_providerSubscriptionId_key" ON "BillingSubscription"("providerSubscriptionId");
+
+-- CreateIndex
+CREATE INDEX "BillingSubscription_provider_status_idx" ON "BillingSubscription"("provider", "status");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BillingWebhookEvent_providerEventId_key" ON "BillingWebhookEvent"("providerEventId");
+
+-- CreateIndex
+CREATE INDEX "BillingWebhookEvent_provider_eventType_receivedAt_idx" ON "BillingWebhookEvent"("provider", "eventType", "receivedAt");
+
+-- CreateIndex
+CREATE INDEX "BillingWebhookEvent_organizationId_receivedAt_idx" ON "BillingWebhookEvent"("organizationId", "receivedAt");
+
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_currentOrganizationId_fkey" FOREIGN KEY ("currentOrganizationId") REFERENCES "Organization"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -218,3 +304,11 @@ ALTER TABLE "AuditEvent" ADD CONSTRAINT "AuditEvent_organizationId_fkey" FOREIGN
 -- AddForeignKey
 ALTER TABLE "AuditEvent" ADD CONSTRAINT "AuditEvent_actorUserId_fkey" FOREIGN KEY ("actorUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
+-- AddForeignKey
+ALTER TABLE "BillingCustomer" ADD CONSTRAINT "BillingCustomer_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BillingSubscription" ADD CONSTRAINT "BillingSubscription_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BillingWebhookEvent" ADD CONSTRAINT "BillingWebhookEvent_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE SET NULL ON UPDATE CASCADE;

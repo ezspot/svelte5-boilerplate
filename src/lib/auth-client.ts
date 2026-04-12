@@ -1,5 +1,3 @@
 import { createAuthClient } from 'better-auth/svelte';
 
-export const authClient = createAuthClient({
-	baseURL: '/api/auth'
-});
+export const authClient = createAuthClient();

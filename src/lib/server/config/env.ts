@@ -17,7 +17,15 @@ const envSchema = z.object({
 	RESEND_API_KEY: z.string().min(1),
 	RESEND_WEBHOOK_SECRET: z.string().min(1),
 	EMAIL_FROM: z.string().min(1),
-	APP_NAME: z.string().min(1).default('Acme SaaS')
+	APP_NAME: z.string().min(1).default('Acme SaaS'),
+	PADDLE_API_KEY: z.string().min(1),
+	PADDLE_ENVIRONMENT: z.enum(['sandbox', 'production']),
+	PADDLE_WEBHOOK_SECRET: z.string().min(1),
+	PADDLE_PRICE_STARTER_MONTHLY: z.string().min(1),
+	PADDLE_PRICE_GROWTH_MONTHLY: z.string().min(1),
+	PUBLIC_PADDLE_CLIENT_TOKEN: z.string().min(1),
+	PUBLIC_BILLING_STARTER_PRICE: z.string().min(1),
+	PUBLIC_BILLING_GROWTH_PRICE: z.string().min(1)
 });
 
 type ParsedEnv = Omit<z.infer<typeof envSchema>, 'TRUSTED_ORIGINS'> & {

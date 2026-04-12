@@ -1,6 +1,6 @@
 # Svelte 5 SaaS Boilerplate
 
-Production-ready SaaS starter built on:
+Production-ready SaaS starter built with:
 
 - Svelte 5
 - SvelteKit
@@ -11,35 +11,72 @@ Production-ready SaaS starter built on:
 - PostgreSQL
 - Better Auth
 - Resend
+- Paddle Billing
 
-## What Is Included
+## Architecture
 
-- Better Auth wired into SvelteKit with server hooks and `event.locals.user` / `event.locals.session`
-- Prisma 7 with explicit generated client output and one shared Prisma client
-- PostgreSQL schema for auth, organizations, memberships, invitations, audit events, and Resend webhook events
-- Resend email service for verification, password reset, and invite emails
-- Resend webhook endpoint with signature verification
-- Public marketing routes
-- Auth routes for login, register, forgot password, verify email, and reset password
-- Authenticated app shell with dashboard and settings pages
-- Server actions for the main forms
-- SSR route protection for authenticated areas
+This project keeps the original application architecture:
 
-## Architecture Decision
-
-This project uses Architecture A:
-
-- Better Auth with Prisma adapter
+- Better Auth with the Prisma adapter
 - Prisma as the single schema and migration source of truth
-- PostgreSQL as the database
+- PostgreSQL for auth and app data
 - Resend for transactional email
 
-Reason:
+For billing, the starter now uses a merchant-of-record approach with Paddle.
 
-- simpler production operations
-- one migration workflow
-- one ORM
-- cleaner developer experience
+### Why Paddle here
+
+The two strongest enterprise billing patterns for a SaaS starter in 2026 are:
+
+1. Direct merchant billing:
+   Stripe Billing or a similar stack, plus your own tax, compliance, invoice, and portal operations.
+2. Merchant of record:
+   Paddle or a similar provider, where more tax and compliance handling is delegated to the billing platform.
+
+This starter selects Paddle because it is the better fit for a Europe-first SaaS that wants a clean path to expand into the US without overbuilding tax and compliance operations too early.
+
+## What is included
+
+- Better Auth mounted in SvelteKit hooks
+- `event.locals.user` and `event.locals.session`
+- Prisma client with explicit generated output and one shared server instance
+- PostgreSQL schema for auth, organizations, memberships, invitations, audit events, email webhooks, and billing data
+- Resend email verification, password reset, and invitations
+- Resend webhook verification endpoint
+- Paddle checkout flow for paid plans
+- Paddle webhook verification and subscription sync
+- Billing portal launch from the app
+- Organization-level billing and plan state
+- Paid-plan gating for teammate invites
+- Marketing routes prerendered where safe
+- Authenticated app routes kept SSR and dynamic
+
+## Routes
+
+Public:
+
+- `/`
+- `/pricing`
+- `/about`
+- `/login`
+- `/register`
+- `/forgot-password`
+- `/verify-email`
+- `/reset-password`
+
+Authenticated app:
+
+- `/dashboard`
+- `/settings/profile`
+- `/settings/security`
+- `/settings/organization`
+- `/settings/billing`
+- `/checkout/paddle`
+
+Integration endpoints:
+
+- `/api/webhooks/resend`
+- `/api/webhooks/paddle`
 
 ## Setup
 
@@ -55,15 +92,20 @@ pnpm install
 cp .env.example .env
 ```
 
-3. Update `.env` with real values.
+3. Update `.env` with real values for:
 
-4. Generate the Prisma client:
+- PostgreSQL
+- Better Auth
+- Resend
+- Paddle
+
+4. Generate Prisma client:
 
 ```bash
 pnpm db:generate
 ```
 
-5. Apply migrations to your database:
+5. Run migrations:
 
 ```bash
 pnpm db:migrate
@@ -75,7 +117,7 @@ pnpm db:migrate
 pnpm dev
 ```
 
-## Environment Variables
+## Environment variables
 
 ```env
 DATABASE_URL=
@@ -86,6 +128,14 @@ RESEND_API_KEY=
 RESEND_WEBHOOK_SECRET=
 EMAIL_FROM=
 APP_NAME=
+PADDLE_API_KEY=
+PADDLE_ENVIRONMENT=
+PADDLE_WEBHOOK_SECRET=
+PADDLE_PRICE_STARTER_MONTHLY=
+PADDLE_PRICE_GROWTH_MONTHLY=
+PUBLIC_PADDLE_CLIENT_TOKEN=
+PUBLIC_BILLING_STARTER_PRICE=
+PUBLIC_BILLING_GROWTH_PRICE=
 ```
 
 ## Scripts
@@ -103,36 +153,37 @@ pnpm db:deploy
 pnpm db:studio
 ```
 
-## Main Routes
+## Sell-ready baseline
 
-- `/` marketing landing page
-- `/pricing` pricing scope page
-- `/about` simple project overview
-- `/login`
-- `/register`
-- `/forgot-password`
-- `/verify-email`
-- `/reset-password`
-- `/dashboard`
-- `/settings/profile`
-- `/settings/security`
-- `/settings/organization`
-- `/settings/billing`
-- `/api/webhooks/resend`
+What is ready now:
 
-## Important Notes
+- user signup and authentication
+- email verification and password reset
+- organization and membership model
+- paid-plan checkout entry
+- customer portal entry
+- billing webhook syncing
+- basic entitlement gating
 
-- Billing is intentionally not integrated yet. The billing service boundary exists, but no Stripe or other provider is connected.
-- `@sveltejs/adapter-auto` is still in use because no deployment target was specified. Switch to the correct SvelteKit adapter when you choose a host.
-- Prisma migrations are checked in under `prisma/migrations`.
-- The generated Prisma client is written to `generated/prisma`.
+What is still intentionally out of scope:
+
+- full billing analytics
+- advanced seat-based billing
+- invoice admin UI
+- refunds and support tooling
+- tax or finance reporting dashboards
+- a live payment provider account configuration
 
 ## Verification
 
-This codebase currently passes:
+This repo currently passes:
 
 ```bash
 pnpm run check
 pnpm run lint
 pnpm run build
 ```
+
+## Deployment note
+
+`@sveltejs/adapter-auto` is still in use because no deployment target has been specified yet. When you choose a platform, switch to the concrete SvelteKit adapter for that host.

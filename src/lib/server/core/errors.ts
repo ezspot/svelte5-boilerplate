@@ -26,3 +26,12 @@ export function getErrorMessage(error: unknown, fallback = 'Something went wrong
 
 	return fallback;
 }
+
+export function logError(error: unknown, context?: string): void {
+	const prefix = context ? `[${context}] ` : '';
+	if (error instanceof Error) {
+		console.error(`${prefix}${error.name}: ${error.message}`, error.stack);
+	} else {
+		console.error(`${prefix}Unknown error:`, error);
+	}
+}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LayoutGrid } from '@lucide/svelte';
+	import { Sparkles } from '@lucide/svelte';
 
 	type Props = {
 		size?: number;
@@ -9,7 +9,7 @@
 </script>
 
 <span
-	class="inline-flex items-center justify-center rounded-xl bg-primary p-2 text-primary-content shadow-sm"
+	class="inline-flex items-center justify-center rounded-2xl border border-white/70 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--color-primary)_82%,white),color-mix(in_oklab,var(--color-secondary)_55%,white))] p-2.5 text-primary-content shadow-[0_16px_30px_-18px_rgba(20,120,98,0.65)]"
 >
-	<LayoutGrid {size} strokeWidth={2.2} />
+	<Sparkles {size} strokeWidth={2.15} />
 </span>

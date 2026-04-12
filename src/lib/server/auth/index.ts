@@ -1,10 +1,15 @@
 import { getRequestEvent } from '$app/server';
 import { prismaAdapter } from '@better-auth/prisma-adapter';
 import { betterAuth } from 'better-auth';
+import { magicLink } from 'better-auth/plugins';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { env } from '$lib/server/config/env';
 import { prisma } from '$lib/server/db/client';
-import { sendPasswordResetEmail, sendVerificationEmail } from '$lib/server/email/resend';
+import {
+	sendMagicLinkEmail,
+	sendPasswordResetEmail,
+	sendVerificationEmail
+} from '$lib/server/email/resend';
 
 export const auth = betterAuth({
 	baseURL: env.BETTER_AUTH_URL,
@@ -64,5 +69,21 @@ export const auth = betterAuth({
 	rateLimit: {
 		enabled: true
 	},
-	plugins: [sveltekitCookies(getRequestEvent)]
+	plugins: [
+		magicLink({
+			expiresIn: 60 * 15,
+			allowedAttempts: 1,
+			storeToken: 'hashed',
+			sendMagicLink: async ({ email, url, token, metadata }) => {
+				await sendMagicLinkEmail({
+					to: email,
+					name: typeof metadata?.name === 'string' ? metadata.name : null,
+					url,
+					token,
+					intent: metadata?.intent === 'signup' ? 'signup' : 'signin'
+				});
+			}
+		}),
+		sveltekitCookies(getRequestEvent)
+	]
 });

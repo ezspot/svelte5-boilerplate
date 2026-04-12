@@ -3,6 +3,7 @@ import { Resend, type WebhookEventPayload } from 'resend';
 import { env } from '$lib/server/config/env';
 import { AppError } from '$lib/server/core/errors';
 import { buildInvitationEmail } from './templates/invitation';
+import { buildMagicLinkEmail } from './templates/magic-link';
 import { buildPasswordResetEmail } from './templates/password-reset';
 import { buildVerificationEmail } from './templates/verification';
 
@@ -80,6 +81,37 @@ export async function sendVerificationEmail({
 		namespace: 'verify',
 		fingerprint: `${to}:${token}`,
 		tags: [{ name: 'flow', value: 'verification' }]
+	});
+}
+
+export async function sendMagicLinkEmail({
+	to,
+	name,
+	url,
+	token,
+	intent
+}: {
+	to: string;
+	name?: string | null;
+	url: string;
+	token: string;
+	intent: 'signin' | 'signup';
+}) {
+	const message = buildMagicLinkEmail({
+		appName: env.APP_NAME,
+		name,
+		url,
+		intent
+	});
+
+	return sendTransactionalEmail({
+		to,
+		subject: message.subject,
+		html: message.html,
+		text: message.text,
+		namespace: 'magic-link',
+		fingerprint: `${to}:${intent}:${token}`,
+		tags: [{ name: 'flow', value: 'magic-link' }]
 	});
 }
 

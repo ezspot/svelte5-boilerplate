@@ -21,6 +21,18 @@ enum InvitationStatus {
   EXPIRED
 }
 
+enum BillingProvider {
+  PADDLE
+}
+
+enum BillingSubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  PAUSED
+  CANCELED
+}
+
 model User {
   id                    String         @id @default(cuid())
   createdAt             DateTime       @default(now())
@@ -86,18 +98,22 @@ model Verification {
 }
 
 model Organization {
-  id           String       @id @default(cuid())
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  name         String
-  slug         String       @unique
-  billingEmail String?
-  ownerId      String
-  owner        User         @relation("OwnedOrganizations", fields: [ownerId], references: [id], onDelete: Restrict)
-  currentUsers User[]       @relation("CurrentOrganization")
-  memberships  Membership[]
-  invitations  Invitation[]
-  auditEvents  AuditEvent[] @relation("OrganizationAuditEvents")
+  id                   String                @id @default(cuid())
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  name                 String
+  slug                 String                @unique
+  planKey              String                @default("free")
+  billingEmail         String?
+  ownerId              String
+  owner                User                  @relation("OwnedOrganizations", fields: [ownerId], references: [id], onDelete: Restrict)
+  currentUsers         User[]                @relation("CurrentOrganization")
+  memberships          Membership[]
+  invitations          Invitation[]
+  auditEvents          AuditEvent[]          @relation("OrganizationAuditEvents")
+  billingCustomer      BillingCustomer?
+  billingSubscription  BillingSubscription?
+  billingWebhookEvents BillingWebhookEvent[]
 }
 
 model Membership {
@@ -161,4 +177,57 @@ model EmailWebhookEvent {
   processedAt   DateTime @default(now())
 
   @@index([type, createdAt])
+}
+
+model BillingCustomer {
+  id                 String          @id @default(cuid())
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  organizationId     String          @unique
+  provider           BillingProvider @default(PADDLE)
+  providerCustomerId String          @unique
+  email              String
+  name               String?
+  organization       Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([provider, email])
+}
+
+model BillingSubscription {
+  id                     String                    @id @default(cuid())
+  createdAt              DateTime                  @default(now())
+  updatedAt              DateTime                  @updatedAt
+  organizationId         String                    @unique
+  provider               BillingProvider           @default(PADDLE)
+  providerSubscriptionId String                    @unique
+  providerTransactionId  String?
+  providerPriceId        String
+  planKey                String
+  status                 BillingSubscriptionStatus
+  currencyCode           String
+  quantity               Int                       @default(1)
+  currentPeriodStartsAt  DateTime?
+  currentPeriodEndsAt    DateTime?
+  nextBilledAt           DateTime?
+  trialEndsAt            DateTime?
+  cancelAtPeriodEnd      Boolean                   @default(false)
+  canceledAt             DateTime?
+  organization           Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([provider, status])
+}
+
+model BillingWebhookEvent {
+  id              String          @id @default(cuid())
+  receivedAt      DateTime        @default(now())
+  processedAt     DateTime        @default(now())
+  organizationId  String?
+  provider        BillingProvider @default(PADDLE)
+  providerEventId String          @unique
+  eventType       String
+  payload         Json
+  organization    Organization?   @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  @@index([provider, eventType, receivedAt])
+  @@index([organizationId, receivedAt])
 }

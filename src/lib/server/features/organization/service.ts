@@ -3,6 +3,7 @@ import type { MembershipRole } from '../../../../../generated/prisma/client';
 import { prisma } from '$lib/server/db/client';
 import { sendOrganizationInviteEmail } from '$lib/server/email/resend';
 import { AppError } from '$lib/server/core/errors';
+import { allowsTeamInvites } from '$lib/server/features/billing/plans';
 import type { InvitationInput, OrganizationNameInput } from './schema';
 
 function slugify(value: string) {
@@ -251,11 +252,22 @@ export async function inviteMember({
 
 	const organization = await prisma.organization.findUnique({
 		where: { id: organizationId },
-		select: { name: true }
+		select: {
+			name: true,
+			planKey: true
+		}
 	});
 
 	if (!organization) {
 		throw new AppError('Workspace not found.', 404, 'ORG_NOT_FOUND');
+	}
+
+	if (!allowsTeamInvites(organization.planKey)) {
+		throw new AppError(
+			'Team invitations are available on paid plans. Upgrade billing to invite teammates.',
+			403,
+			'PLAN_UPGRADE_REQUIRED'
+		);
 	}
 
 	const token = randomUUID();
