@@ -71,15 +71,15 @@ a {
 }
 
 .surface-panel {
-	@apply rounded-[1.75rem] border border-base-300/70 bg-base-100/92 shadow-[0_22px_70px_-36px_rgba(15,23,42,0.2)] backdrop-blur-xl;
+	@apply rounded-2xl border border-base-300/70 bg-base-100/92 shadow-[0_22px_70px_-36px_rgba(15,23,42,0.2)] backdrop-blur-xl;
 }
 
 .surface-panel-muted {
-	@apply rounded-[1.5rem] border border-base-300/70 bg-base-200/72 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.16)];
+	@apply rounded-xl border border-base-300/70 bg-base-200/72 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.16)];
 }
 
 .hero-surface {
-	@apply rounded-[2rem] border border-white/80 bg-white/82 shadow-[0_32px_100px_-42px_rgba(15,23,42,0.24)] backdrop-blur-2xl;
+	@apply rounded-2xl border border-white/80 bg-white/82 shadow-[0_32px_100px_-42px_rgba(15,23,42,0.24)] backdrop-blur-2xl;
 }
 
 .eyebrow {
@@ -127,7 +127,7 @@ a {
 }
 
 .app-nav-link {
-	@apply flex min-h-11 items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-white/6 hover:text-white;
+	@apply flex min-h-10 items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/6 hover:text-white;
 }
 
 .app-nav-link-active {
@@ -143,19 +143,35 @@ a {
 }
 
 .app-page {
-	@apply px-3 py-16 md:px-5 md:py-6 lg:px-7 lg:py-7;
+	@apply px-4 pt-4 pb-8 md:px-5 md:pt-5 md:pb-8 lg:px-6 lg:pt-5 lg:pb-10;
 }
 
 .app-content-card {
-	@apply rounded-[1.5rem] border border-base-300/80 bg-white shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)];
+	@apply rounded-xl border border-base-300/80 bg-white shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)];
 }
 
 .dashboard-card {
-	@apply rounded-[1.5rem] border border-base-300/80 bg-white p-5 shadow-[0_22px_46px_-34px_rgba(15,23,42,0.16)];
+	@apply rounded-xl border border-base-300/80 bg-white p-4 shadow-[0_22px_46px_-34px_rgba(15,23,42,0.16)];
+}
+
+.app-page-header {
+	@apply flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-base-300/70 pb-3;
+}
+
+.app-page-title {
+	@apply text-lg font-semibold tracking-tight;
+}
+
+.app-inline-stats {
+	@apply flex flex-wrap items-center gap-3 text-sm text-base-content/60;
+}
+
+.app-inline-stat {
+	@apply inline-flex items-center gap-1.5;
 }
 
 .app-header-card {
-	@apply grid gap-4 rounded-[1.5rem] border border-base-300/80 bg-white px-5 py-5 shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start lg:px-6;
+	@apply grid gap-4 rounded-xl border border-base-300/80 bg-white px-4 py-4 shadow-[0_24px_50px_-34px_rgba(15,23,42,0.18)] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start lg:px-5;
 }
 
 .app-header-meta {
@@ -167,7 +183,7 @@ a {
 }
 
 .app-kpi-card {
-	@apply rounded-[1.25rem] border border-base-300/75 bg-base-100 px-4 py-4 shadow-[0_18px_34px_-30px_rgba(15,23,42,0.16)];
+	@apply rounded-lg border border-base-300/75 bg-base-100 px-3.5 py-3 shadow-[0_18px_34px_-30px_rgba(15,23,42,0.16)];
 }
 
 .app-side-stack {
@@ -175,7 +191,7 @@ a {
 }
 
 .app-note-card {
-	@apply rounded-[1.25rem] border border-base-300/75 bg-base-100 p-4;
+	@apply rounded-lg border border-base-300/75 bg-base-100 p-3.5;
 }
 
 .app-link-list {
@@ -211,15 +227,15 @@ a {
 }
 
 .marketing-panel {
-	@apply rounded-[1.75rem] border border-white/10 bg-slate-950/52 text-slate-100 shadow-[0_30px_100px_-50px_rgba(2,6,23,0.85)] backdrop-blur-2xl;
+	@apply rounded-2xl border border-white/10 bg-slate-950/52 text-slate-100 shadow-[0_30px_100px_-50px_rgba(2,6,23,0.85)] backdrop-blur-2xl;
 }
 
 .marketing-panel-muted {
-	@apply rounded-[1.5rem] border border-slate-200/80 bg-white text-slate-900 shadow-[0_22px_50px_-34px_rgba(15,23,42,0.14)];
+	@apply rounded-2xl border border-slate-200/80 bg-white text-slate-900 shadow-[0_22px_50px_-34px_rgba(15,23,42,0.14)];
 }
 
 .marketing-stat {
-	@apply rounded-[1.35rem] border border-white/10 bg-white/6 p-4;
+	@apply rounded-2xl border border-white/10 bg-white/6 p-4;
 }
 
 .marketing-footer {

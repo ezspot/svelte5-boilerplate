@@ -16,51 +16,25 @@
 </svelte:head>
 
 <div class="space-y-4">
-	<section class="app-header-card">
-		<div>
-			<div class="app-header-meta">
-				<span class="app-meta-pill">Organization</span>
-				<span class="app-meta-pill">{data.organization.planKey.toUpperCase()} plan</span>
-			</div>
-			<h1 class="mt-4 text-3xl font-semibold tracking-tight text-balance">
-				Workspace controls for team and identity.
-			</h1>
-			<p class="section-copy mt-3 text-base">
-				Keep workspace naming, members, and invitations inside one operational surface with the plan
-				boundary clearly visible.
-			</p>
+	<header class="app-page-header">
+		<h1 class="app-page-title">Organization</h1>
+		<div class="app-inline-stats">
+			<span class="app-inline-stat">
+				<Building2 size={14} />
+				{data.organization.name}
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<UsersRound size={14} />
+				{data.organization.memberships.length} members
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<MailPlus size={14} />
+				{data.organization.invitations.length} pending
+			</span>
 		</div>
-
-		<div class="grid gap-3 sm:grid-cols-3 lg:w-120">
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Workspace
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<Building2 size={16} class="text-primary" />
-					{data.organization.name}
-				</p>
-			</div>
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Members
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<UsersRound size={16} class="text-secondary" />
-					{data.organization.memberships.length} active
-				</p>
-			</div>
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Pending invites
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<MailPlus size={16} class="text-primary" />
-					{data.organization.invitations.length}
-				</p>
-			</div>
-		</div>
-	</section>
+	</header>
 
 	<FormAlert message={form?.message} tone={form?.success ? 'success' : 'error'} />
 

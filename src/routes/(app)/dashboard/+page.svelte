@@ -14,51 +14,22 @@
 </svelte:head>
 
 <div class="space-y-4">
-	<section class="app-header-card">
-		<div>
-			<div class="app-header-meta">
-				<span class="app-meta-pill">Live workspace</span>
-				<span class="app-meta-pill">{data.organization.name}</span>
-			</div>
-			<h1 class="mt-4 text-3xl font-semibold tracking-tight text-balance">Overview</h1>
-			<p class="section-copy mt-3 text-base">
-				A tighter operator view for day-to-day product work: workspace posture, collaboration
-				readiness, and recent activity in one console.
-			</p>
+	<header class="app-page-header">
+		<h1 class="app-page-title">Overview</h1>
+		<div class="app-inline-stats">
+			<span class="app-inline-stat">
+				<CreditCard size={14} />
+				<span class="capitalize">{data.organization.planKey}</span>
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<Users size={14} />
+				<span class="capitalize">{data.membership.role.toLowerCase()}</span>
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">{data.organization.name}</span>
 		</div>
-
-		<div class="grid gap-3 sm:grid-cols-2 lg:w-[22rem]">
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Plan
-				</p>
-				<div class="mt-3 flex items-center justify-between gap-3">
-					<p class="text-lg font-semibold capitalize">{data.organization.planKey}</p>
-					<a
-						class="text-sm font-medium text-primary hover:text-primary/80"
-						href={resolve('/settings/billing')}
-					>
-						Manage
-					</a>
-				</div>
-			</div>
-
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Access
-				</p>
-				<div class="mt-3 flex items-center justify-between gap-3">
-					<p class="text-lg font-semibold capitalize">{data.membership.role.toLowerCase()}</p>
-					<a
-						class="text-sm font-medium text-primary hover:text-primary/80"
-						href={resolve('/settings/organization')}
-					>
-						Review
-					</a>
-				</div>
-			</div>
-		</div>
-	</section>
+	</header>
 
 	{#if navigating.to}
 		<div class="app-content-card p-5">

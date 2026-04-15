@@ -12,53 +12,25 @@
 </svelte:head>
 
 <div class="space-y-4">
-	<section class="app-header-card">
-		<div>
-			<div class="app-header-meta">
-				<span class="app-meta-pill">Security</span>
-				<span class="app-meta-pill"
-					>{data.hasPassword ? 'Password + magic link' : 'Magic link first'}</span
-				>
-			</div>
-			<h1 class="mt-4 text-3xl font-semibold tracking-tight text-balance">
-				Verification, reset, and session oversight.
-			</h1>
-			<p class="section-copy mt-3 text-base">
-				The baseline keeps account security intentionally simple: verified email, clean reset flows,
-				and clear visibility into active sessions.
-			</p>
+	<header class="app-page-header">
+		<h1 class="app-page-title">Security</h1>
+		<div class="app-inline-stats">
+			<span class="app-inline-stat">
+				<ShieldCheck size={14} class={data.emailVerified ? 'text-success' : 'text-warning'} />
+				{data.emailVerified ? 'Verified' : 'Pending'}
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<Clock3 size={14} />
+				{data.sessions.length} session{data.sessions.length === 1 ? '' : 's'}
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<KeyRound size={14} />
+				{data.hasPassword ? 'Password enabled' : 'Magic link only'}
+			</span>
 		</div>
-
-		<div class="grid gap-3 sm:grid-cols-3 lg:w-[30rem]">
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Email status
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<ShieldCheck size={16} class={data.emailVerified ? 'text-success' : 'text-warning'} />
-					{data.emailVerified ? 'Verified' : 'Pending'}
-				</p>
-			</div>
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Active sessions
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<Clock3 size={16} class="text-secondary" />
-					{data.sessions.length} open session{data.sessions.length === 1 ? '' : 's'}
-				</p>
-			</div>
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Recovery path
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<KeyRound size={16} class="text-primary" />
-					{data.hasPassword ? 'Password enabled' : 'Magic link only'}
-				</p>
-			</div>
-		</div>
-	</section>
+	</header>
 
 	<FormAlert message={form?.message} tone={form?.success ? 'success' : 'error'} />
 
@@ -185,7 +157,7 @@
 									<span class="font-medium text-base-content">Expires:</span>
 									{session.expiresAt.toLocaleString()}
 								</p>
-								<p class="break-words">
+								<p class="warp-break-word">
 									<span class="font-medium text-base-content">User agent:</span>
 									{session.userAgent ?? 'Unavailable'}
 								</p>

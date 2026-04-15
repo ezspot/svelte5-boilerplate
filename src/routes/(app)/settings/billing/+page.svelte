@@ -24,60 +24,30 @@
 </svelte:head>
 
 <div class="space-y-4">
-	<section class="app-header-card">
-		<div>
-			<div class="app-header-meta">
-				<span class="app-meta-pill">Billing</span>
-				<span class="app-meta-pill">{data.billing.currentPlan.name}</span>
-			</div>
-			<h1 class="mt-4 text-3xl font-semibold tracking-tight text-balance">
-				Commercial controls with a lighter operational footprint.
-			</h1>
-			<p class="section-copy mt-3 text-base">
-				Merchant-of-record billing keeps Europe-first tax and compliance handling simpler while
-				preserving a clean path to US expansion.
-			</p>
+	<header class="app-page-header">
+		<h1 class="app-page-title">Billing</h1>
+		<div class="app-inline-stats">
+			<span class="app-inline-stat">
+				<CreditCard size={14} />
+				{data.billing.currentPlan.name}
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<BadgeCheck size={14} class={data.billing.statusLabel === 'Active' ? 'text-success' : ''} />
+				{data.billing.statusLabel}
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<CalendarDays size={14} />
+				{formatDate(data.billing.renewalAt)}
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<UsersRound size={14} />
+				{data.billing.allowsTeamInvites ? 'Invites enabled' : 'Upgrade required'}
+			</span>
 		</div>
-
-		<div class="grid gap-3 sm:grid-cols-2 lg:w-[42rem] xl:grid-cols-4">
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Plan
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<CreditCard size={16} class="text-primary" />
-					{data.billing.currentPlan.name}
-				</p>
-			</div>
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Status
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<BadgeCheck size={16} class="text-success" />
-					{data.billing.statusLabel}
-				</p>
-			</div>
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Next billing date
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<CalendarDays size={16} class="text-secondary" />
-					{formatDate(data.billing.renewalAt)}
-				</p>
-			</div>
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Collaboration
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<UsersRound size={16} class="text-primary" />
-					{data.billing.allowsTeamInvites ? 'Invites enabled' : 'Upgrade required'}
-				</p>
-			</div>
-		</div>
-	</section>
+	</header>
 
 	<FormAlert
 		message={data.notice ?? form?.message}

@@ -21,7 +21,7 @@
 				</p>
 			</div>
 
-			<div class="rounded-[1.5rem] border border-white/10 bg-white/6 p-5 text-slate-100">
+			<div class="rounded-3xl border border-white/10 bg-white/6 p-5 text-slate-100">
 				<div>
 					<p class="eyebrow">Default principles</p>
 					<p class="mt-3 text-lg font-semibold">Production-ready without product lock-in</p>

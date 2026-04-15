@@ -16,6 +16,7 @@
 	import type { Snippet } from 'svelte';
 	import { onMount } from 'svelte';
 	import LogoMark from '$lib/components/icons/logo-mark.svelte';
+	import AppBreadcrumbs from '$lib/components/ui/app-breadcrumbs.svelte';
 	import ClientSessionBadge from '$lib/components/ui/client-session-badge.svelte';
 	import type { LayoutData } from './$types';
 
@@ -138,8 +139,8 @@
 				</button>
 			</div>
 
-			<div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-3 py-4">
-				<nav class="space-y-1.5">
+			<div class="min-h-0 flex-1 overflow-y-auto px-3 py-3">
+				<nav class="space-y-1">
 					{#each navItems as item (item.href)}
 						{@const Icon = item.icon}
 						<a
@@ -183,7 +184,7 @@
 						</form>
 					</div>
 				{:else}
-					<div class="rounded-[1.35rem] border border-white/8 bg-white/5 p-2.5 text-slate-100">
+					<div class="rounded-2xl border border-white/8 bg-white/5 p-2.5 text-slate-100">
 						<a
 							class="flex items-start gap-3 rounded-xl px-2.5 py-2 transition hover:bg-white/6"
 							href={resolve('/settings/profile')}
@@ -234,8 +235,8 @@
 				</div>
 			</div>
 
-			<div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-5">
-				<nav class="space-y-1.5">
+			<div class="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+				<nav class="space-y-1">
 					{#each navItems as item (item.href)}
 						{@const Icon = item.icon}
 						<a
@@ -253,7 +254,7 @@
 			</div>
 
 			<div class="border-t border-base-300/80 p-4">
-				<div class="rounded-[1.35rem] border border-white/8 bg-white/5 p-2.5 text-slate-100">
+				<div class="rounded-2xl border border-white/8 bg-white/5 p-2.5 text-slate-100">
 					<a
 						class="flex items-start gap-3 rounded-xl px-2.5 py-2 transition hover:bg-white/6"
 						href={resolve('/settings/profile')}
@@ -288,20 +289,28 @@
 		</aside>
 
 		<div class="min-w-0">
-			<button
-				class="btn fixed top-3 left-3 z-20 btn-square rounded-xl border border-slate-900/10 bg-base-100/92 text-slate-900 shadow-sm backdrop-blur lg:hidden"
-				type="button"
-				aria-label="Open navigation"
-				onclick={() => {
-					mobileNavOpen = !mobileNavOpen;
-				}}
-			>
-				<Menu size={18} />
-			</button>
+			<header class="flex items-center gap-3 px-4 pt-3 pb-1 lg:hidden">
+				<button
+					class="btn btn-square btn-sm rounded-lg border border-slate-900/10 bg-base-100/92 text-slate-900 shadow-sm backdrop-blur"
+					type="button"
+					aria-label="Open navigation"
+					onclick={() => {
+						mobileNavOpen = !mobileNavOpen;
+					}}
+				>
+					<Menu size={16} />
+				</button>
+				<AppBreadcrumbs />
+			</header>
 
-			<main class="app-page">
-				<div class="mx-auto w-full max-w-[1600px]">{@render children()}</div>
-			</main>
+			<div class="app-page">
+				<div class="mx-auto w-full max-w-screen-2xl">
+					<div class="mb-3 hidden lg:block">
+						<AppBreadcrumbs />
+					</div>
+					<main>{@render children()}</main>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

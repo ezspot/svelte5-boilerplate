@@ -13,57 +13,25 @@
 </svelte:head>
 
 <div class="space-y-4">
-	<section class="app-header-card">
-		<div>
-			<div class="app-header-meta">
-				<span class="app-meta-pill">Profile</span>
-				<span class="app-meta-pill">
-					<Mail size={14} class="text-primary" />
-					{data.profile.email}
-				</span>
-			</div>
-			<h1 class="mt-4 text-3xl font-semibold tracking-tight text-balance">
-				Account identity and operator context.
-			</h1>
-			<p class="section-copy mt-3 text-base">
-				Keep the primary user record current so audit trails, billing communications, and team
-				operations stay trustworthy.
-			</p>
+	<header class="app-page-header">
+		<h1 class="app-page-title">Profile</h1>
+		<div class="app-inline-stats">
+			<span class="app-inline-stat">
+				<Mail size={14} />
+				{data.profile.email}
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<BadgeCheck size={14} class={data.profile.emailVerified ? 'text-success' : 'text-warning'} />
+				{data.profile.emailVerified ? 'Verified' : 'Pending'}
+			</span>
+			<span class="text-base-300">|</span>
+			<span class="app-inline-stat">
+				<CalendarDays size={14} />
+				{data.profile.createdAt.toLocaleDateString()}
+			</span>
 		</div>
-
-		<div class="grid gap-3 sm:grid-cols-3 lg:w-[30rem]">
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Email
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<Mail size={16} class="text-primary" />
-					{data.profile.email}
-				</p>
-			</div>
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Verification
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<BadgeCheck
-						size={16}
-						class={data.profile.emailVerified ? 'text-success' : 'text-warning'}
-					/>
-					{data.profile.emailVerified ? 'Verified' : 'Pending'}
-				</p>
-			</div>
-			<div class="app-kpi-card">
-				<p class="text-[0.68rem] font-semibold tracking-[0.2em] text-base-content/45 uppercase">
-					Member since
-				</p>
-				<p class="mt-3 flex items-center gap-2 text-sm font-medium">
-					<CalendarDays size={16} class="text-secondary" />
-					{data.profile.createdAt.toLocaleDateString()}
-				</p>
-			</div>
-		</div>
-	</section>
+	</header>
 
 	<div class="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_320px]">
 		<SectionCard
