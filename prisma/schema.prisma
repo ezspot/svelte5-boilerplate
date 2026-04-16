@@ -33,6 +33,28 @@ enum BillingSubscriptionStatus {
   CANCELED
 }
 
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketChannel {
+  PORTAL
+  EMAIL
+  PHONE
+  MANUAL
+}
+
 model User {
   id                    String         @id @default(cuid())
   createdAt             DateTime       @default(now())
@@ -49,6 +71,9 @@ model User {
   auditEvents           AuditEvent[]   @relation("ActorAuditEvents")
   invitationsSent       Invitation[]   @relation("InvitationSender")
   ownedOrganizations    Organization[] @relation("OwnedOrganizations")
+  ticketsCreated        Ticket[]         @relation("TicketCreator")
+  ticketsAssigned       Ticket[]         @relation("TicketAssignee")
+  ticketComments        TicketComment[]   @relation("AgentComment")
 }
 
 model Session {
@@ -104,6 +129,7 @@ model Organization {
   name                 String
   slug                 String                @unique
   planKey              String                @default("free")
+  ticketPrefix         String                @default("TKT")
   billingEmail         String?
   ownerId              String
   owner                User                  @relation("OwnedOrganizations", fields: [ownerId], references: [id], onDelete: Restrict)
@@ -114,6 +140,13 @@ model Organization {
   billingCustomer      BillingCustomer?
   billingSubscription  BillingSubscription?
   billingWebhookEvents BillingWebhookEvent[]
+  contacts             Contact[]
+  tickets              Ticket[]
+  ticketComments       TicketComment[]
+  cannedResponses      CannedResponse[]
+  slaPolicies          SlaPolicy[]
+  ticketTags           TicketTag[]
+  helpdeskSettings     HelpdeskSettings?
 }
 
 model Membership {
@@ -230,4 +263,130 @@ model BillingWebhookEvent {
 
   @@index([provider, eventType, receivedAt])
   @@index([organizationId, receivedAt])
+}
+
+model HelpdeskSettings {
+  id                   String       @id @default(cuid())
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  organizationId       String       @unique
+  fromName             String?
+  fromEmail            String?
+  resendApiKey         String?
+  inboundWebhookSecret String?
+  organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model Contact {
+  id             String          @id @default(cuid())
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  organizationId String
+  email          String
+  name           String
+  phone          String?
+  company        String?
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tickets        Ticket[]
+  comments       TicketComment[] @relation("ContactComment")
+
+  @@unique([organizationId, email])
+  @@index([organizationId, name])
+}
+
+model Ticket {
+  id                     String         @id @default(cuid())
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  organizationId         String
+  number                 Int
+  displayId              String
+  publicId               String         @unique
+  title                  String
+  description            String
+  status                 TicketStatus   @default(OPEN)
+  priority               TicketPriority @default(MEDIUM)
+  channel                TicketChannel  @default(MANUAL)
+  contactId              String
+  createdById            String?
+  assignedToId           String?
+  closedAt               DateTime?
+  slaFirstResponseDueAt  DateTime?
+  slaResolutionDueAt     DateTime?
+  firstRespondedAt       DateTime?
+  organization           Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contact                Contact        @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  createdBy              User?          @relation("TicketCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  assignedTo             User?          @relation("TicketAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  comments               TicketComment[]
+  tags                   TicketTag[]
+
+  @@unique([organizationId, number])
+  @@unique([organizationId, displayId])
+  @@index([organizationId, status, createdAt])
+  @@index([organizationId, publicId])
+  @@index([contactId])
+  @@index([assignedToId])
+}
+
+model TicketComment {
+  id             String       @id @default(cuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  ticketId       String
+  organizationId String
+  authorId       String?
+  contactId      String?
+  body           String
+  internal       Boolean      @default(false)
+  ticket         Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  author         User?        @relation("AgentComment", fields: [authorId], references: [id], onDelete: SetNull)
+  contact        Contact?     @relation("ContactComment", fields: [contactId], references: [id], onDelete: SetNull)
+
+  @@index([ticketId, createdAt])
+  @@index([organizationId])
+}
+
+model CannedResponse {
+  id             String       @id @default(cuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organizationId String
+  title          String
+  body           String
+  shortcut       String?
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, title])
+  @@index([organizationId])
+}
+
+model SlaPolicy {
+  id                     String         @id @default(cuid())
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  organizationId         String
+  name                   String
+  priority               TicketPriority
+  firstResponseMinutes   Int
+  resolutionMinutes      Int
+  isDefault              Boolean        @default(false)
+  organization           Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, priority])
+  @@index([organizationId])
+}
+
+model TicketTag {
+  id             String       @id @default(cuid())
+  createdAt      DateTime     @default(now())
+  organizationId String
+  name           String
+  color          String       @default("#6b7280")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tickets        Ticket[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId])
 }

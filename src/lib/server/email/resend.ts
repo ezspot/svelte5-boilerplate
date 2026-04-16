@@ -5,13 +5,37 @@ import { AppError } from '$lib/server/core/errors';
 import { buildInvitationEmail } from './templates/invitation';
 import { buildMagicLinkEmail } from './templates/magic-link';
 import { buildPasswordResetEmail } from './templates/password-reset';
+import { buildTicketCreatedEmail } from './templates/ticket-created';
+import { buildTicketReplyEmail } from './templates/ticket-reply';
 import { buildVerificationEmail } from './templates/verification';
 
-const resend = new Resend(env.RESEND_API_KEY);
+const platformResend = new Resend(env.RESEND_API_KEY);
 
 function createIdempotencyKey(namespace: string, fingerprint: string) {
 	const digest = createHash('sha256').update(fingerprint).digest('hex');
 	return `${namespace}:${digest.slice(0, 48)}`;
+}
+
+export interface OrgEmailConfig {
+	resendApiKey?: string | null;
+	fromEmail?: string | null;
+	fromName?: string | null;
+}
+
+function getResendClient(orgConfig?: OrgEmailConfig | null): Resend {
+	if (orgConfig?.resendApiKey) {
+		return new Resend(orgConfig.resendApiKey);
+	}
+	return platformResend;
+}
+
+function getFromAddress(orgConfig?: OrgEmailConfig | null): string {
+	if (orgConfig?.fromEmail) {
+		return orgConfig.fromName
+			? `${orgConfig.fromName} <${orgConfig.fromEmail}>`
+			: orgConfig.fromEmail;
+	}
+	return env.EMAIL_FROM;
 }
 
 async function sendTransactionalEmail({
@@ -21,7 +45,8 @@ async function sendTransactionalEmail({
 	text,
 	namespace,
 	fingerprint,
-	tags
+	tags,
+	orgConfig
 }: {
 	to: string;
 	subject: string;
@@ -30,10 +55,14 @@ async function sendTransactionalEmail({
 	namespace: string;
 	fingerprint: string;
 	tags: { name: string; value: string }[];
+	orgConfig?: OrgEmailConfig | null;
 }) {
-	const response = await resend.emails.send(
+	const client = getResendClient(orgConfig);
+	const from = getFromAddress(orgConfig);
+
+	const response = await client.emails.send(
 		{
-			from: env.EMAIL_FROM,
+			from,
 			to,
 			subject,
 			html,
@@ -174,6 +203,94 @@ export async function sendOrganizationInviteEmail({
 	});
 }
 
+export async function sendTicketCreatedEmail({
+	to,
+	orgName,
+	orgSlug,
+	displayId,
+	title,
+	publicId,
+	orgConfig
+}: {
+	to: string;
+	orgName: string;
+	orgSlug: string;
+	displayId: string;
+	title: string;
+	publicId: string;
+	orgConfig?: OrgEmailConfig | null;
+}) {
+	const portalUrl = `${env.BETTER_AUTH_URL}/portal/${orgSlug}/ticket/${publicId}`;
+	const message = buildTicketCreatedEmail({
+		appName: env.APP_NAME,
+		orgName,
+		displayId,
+		title,
+		portalUrl
+	});
+
+	return sendTransactionalEmail({
+		to,
+		subject: message.subject,
+		html: message.html,
+		text: message.text,
+		namespace: 'ticket-created',
+		fingerprint: `${orgSlug}:${displayId}:${to}`,
+		tags: [
+			{ name: 'flow', value: 'ticket-created' },
+			{ name: 'ticket', value: displayId }
+		],
+		orgConfig
+	});
+}
+
+export async function sendTicketReplyEmail({
+	to,
+	orgName,
+	orgSlug,
+	displayId,
+	title,
+	publicId,
+	replierName,
+	bodyPreview,
+	orgConfig
+}: {
+	to: string;
+	orgName: string;
+	orgSlug: string;
+	displayId: string;
+	title: string;
+	publicId: string;
+	replierName: string;
+	bodyPreview: string;
+	orgConfig?: OrgEmailConfig | null;
+}) {
+	const portalUrl = `${env.BETTER_AUTH_URL}/portal/${orgSlug}/ticket/${publicId}`;
+	const message = buildTicketReplyEmail({
+		appName: env.APP_NAME,
+		orgName,
+		displayId,
+		title,
+		replierName,
+		bodyPreview,
+		portalUrl
+	});
+
+	return sendTransactionalEmail({
+		to,
+		subject: message.subject,
+		html: message.html,
+		text: message.text,
+		namespace: 'ticket-reply',
+		fingerprint: `${orgSlug}:${displayId}:${Date.now()}`,
+		tags: [
+			{ name: 'flow', value: 'ticket-reply' },
+			{ name: 'ticket', value: displayId }
+		],
+		orgConfig
+	});
+}
+
 export function verifyResendWebhook(payload: string, headers: Headers): WebhookEventPayload {
 	const id = headers.get('svix-id');
 	const timestamp = headers.get('svix-timestamp');
@@ -183,7 +300,7 @@ export function verifyResendWebhook(payload: string, headers: Headers): WebhookE
 		throw new AppError('Missing Resend webhook headers.', 400, 'INVALID_WEBHOOK_HEADERS');
 	}
 
-	return resend.webhooks.verify({
+	return platformResend.webhooks.verify({
 		payload,
 		webhookSecret: env.RESEND_WEBHOOK_SECRET,
 		headers: {

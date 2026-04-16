@@ -10,6 +10,7 @@
 		LogOut,
 		Menu,
 		ShieldCheck,
+		Ticket,
 		UsersRound,
 		UserRound
 	} from '@lucide/svelte';
@@ -22,6 +23,7 @@
 
 	type AppNavHref =
 		| '/dashboard'
+		| '/tickets'
 		| '/settings/security'
 		| '/settings/organization'
 		| '/settings/billing';
@@ -43,6 +45,11 @@
 			href: '/dashboard',
 			label: 'Dashboard',
 			icon: LayoutDashboard
+		},
+		{
+			href: '/tickets',
+			label: 'Tickets',
+			icon: Ticket
 		},
 		{
 			href: '/settings/security',
